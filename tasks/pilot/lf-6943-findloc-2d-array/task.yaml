@@ -1,0 +1,19 @@
+id: lf-6943-findloc-2d-array
+title: "lfortran: fix findloc for 2-D arrays"
+repo_url: https://github.com/lfortran/lfortran.git
+issue_url: https://github.com/lfortran/lfortran/pull/6943
+base_commit: e98cfef6b63c3e248aa243ce404852e418694463
+fixed_commit: 95ce13ca46e02e59045f1b8027156a3eb2151083
+setup_commands:
+  - "conda run -n lf-llvm11 bash -c 'cd {workspace} && bash build0.sh && cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DWITH_LLVM=yes -DCMAKE_BUILD_TYPE=Debug -DWITH_ZSTD=no -DWITH_ZLIB=no -DWITH_RUNTIME_STACKTRACE=yes && ninja -C build'"
+acceptance_commands:
+  - "python3 {task_dir}/validate.py {workspace}"
+issue_body: |
+  The findloc intrinsic does not work correctly for multi-dimensional
+  arrays.  When called on a 2-D integer or character array without the
+  dim argument, it returns incorrect indices or crashes.  The fix is in
+  the intrinsic array function registry pass.
+acceptance_hint: |
+  The validator compiles and runs integration_tests/intrinsics_374.f90
+  using the built lfortran binary. The test calls findloc on 2-D integer
+  and character arrays and verifies the returned indices.
