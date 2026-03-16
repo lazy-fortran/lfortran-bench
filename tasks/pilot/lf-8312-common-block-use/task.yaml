@@ -1,0 +1,21 @@
+id: lf-8312-common-block-use
+title: "lfortran: fix common block variable access from contained subroutine"
+repo_url: https://github.com/lfortran/lfortran.git
+issue_url: https://github.com/lfortran/lfortran/pull/8312
+base_commit: 3785cf9077815114279e36a391d49f026efdf309
+fixed_commit: 724e06adcb62ab71d6bc13f55f35248d6b7c6641
+setup_commands:
+  - "conda run -n lf-llvm11 bash -c 'cd {workspace} && bash build0.sh && cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DWITH_LLVM=yes -DCMAKE_BUILD_TYPE=Debug -DWITH_ZSTD=no -DWITH_ZLIB=no -DWITH_RUNTIME_STACKTRACE=yes && ninja -C build'"
+acceptance_commands:
+  - "python3 {task_dir}/validate.py {workspace}"
+issue_body: |
+  Common block variables declared in a host program are not accessible
+  from contained subroutines that redeclare the same common block.
+  The compiler fails to resolve the shared storage association, causing
+  incorrect values or compilation errors when the contained procedure
+  accesses the common block variables.
+acceptance_hint: |
+  The validator compiles and runs integration_tests/common_14.f90
+  using the built lfortran binary. The test sets common block variables
+  in the main program and verifies their values from a contained
+  subroutine that redeclares the same common block.
