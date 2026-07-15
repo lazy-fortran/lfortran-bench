@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 import os
 import signal
-import shlex
 import subprocess
 import time
 from dataclasses import dataclass
@@ -20,6 +19,19 @@ class AgentResponse:
     duration_seconds: float
     text: str
     error: str | None = None
+
+
+TERMINATION_GRACE_SECONDS = 2
+
+
+def _terminate_process(proc: subprocess.Popen) -> tuple[str, str]:
+    """Terminate a process group without waiting forever for cooperative exit."""
+    os.killpg(proc.pid, signal.SIGTERM)
+    try:
+        return proc.communicate(timeout=TERMINATION_GRACE_SECONDS)
+    except subprocess.TimeoutExpired:
+        os.killpg(proc.pid, signal.SIGKILL)
+        return proc.communicate()
 
 
 def _workspace_progress_signature(cwd: Path) -> str:
@@ -64,8 +76,7 @@ def _run_command(
     while True:
         remaining = max(0.0, deadline - time.time())
         if remaining <= 0:
-            os.killpg(proc.pid, signal.SIGTERM)
-            stdout, stderr = proc.communicate()
+            stdout, stderr = _terminate_process(proc)
             duration = time.time() - started
             return AgentResponse(
                 ok=False,
@@ -97,8 +108,7 @@ def _run_command(
                     last_signature = current_signature
                     last_progress = time.time()
                 elif time.time() - last_progress >= stagnation_seconds:
-                    os.killpg(proc.pid, signal.SIGTERM)
-                    stdout, stderr = proc.communicate()
+                    stdout, stderr = _terminate_process(proc)
                     duration = time.time() - started
                     return AgentResponse(
                         ok=False,

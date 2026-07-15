@@ -417,27 +417,6 @@ def failure_result(task: dict, row: dict, exc: Exception) -> dict:
     }
 
 
-def collect_completed_futures(
-    future_map: dict,
-    run_rows: list[dict],
-    suite: dict,
-    output_dir: Path,
-    continue_on_error: bool,
-) -> int:
-    done_futures = [future for future in future_map if future.done()]
-    for future in done_futures:
-        task, row = future_map.pop(future)
-        try:
-            run_rows.append(future.result())
-            write_suite_artifacts(output_dir, suite, run_rows)
-        except Exception as exc:
-            run_rows.append(failure_result(task, row, exc))
-            write_suite_artifacts(output_dir, suite, run_rows)
-            if not continue_on_error:
-                return 1
-    return 0
-
-
 def run_suite(suite_path: Path, output_dir: Path, continue_on_error: bool) -> int:
     suite, tasks = load_suite(suite_path)
     output_dir = output_dir.resolve()

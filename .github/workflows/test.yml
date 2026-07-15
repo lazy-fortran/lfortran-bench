@@ -13,25 +13,17 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install -e .
-      - run: python -c "import lfortran_bench; print(lfortran_bench.__version__)"
+      - name: Run behavioral tests
+        run: python -m unittest discover -s tests -v
       - name: Validate task manifests
         run: |
+          shopt -s nullglob
           for f in tasks/*/task.yaml tasks/*/*/task.yaml; do
-            [ -f "$f" ] && python -c "
+            python -c "
           import yaml, sys
           t = yaml.safe_load(open('$f'))
           for key in ('id', 'title', 'repo_url', 'base_commit', 'fixed_commit'):
               assert key in t, f'missing {key} in $f'
           print(f'OK: $f')
-          " || true
-          done
-      - name: Validate suite definitions
-        run: |
-          for f in suites/*.yaml; do
-            [ -f "$f" ] && python -c "
-          import yaml, sys
-          s = yaml.safe_load(open('$f'))
-          assert 'name' in s and 'tasks' in s and 'rows' in s, f'invalid suite: $f'
-          print(f'OK: $f')
-          " || true
+          "
           done

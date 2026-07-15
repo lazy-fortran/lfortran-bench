@@ -1,8 +1,10 @@
 # Oracle Verification Status
 
-Verified: 20/20
+Candidate manifests prepared: 20/20
 
-## PASS (20 tasks ready)
+End-to-end oracle verification (base fails, fixed passes) is still pending.
+
+## Candidates (20 task manifests ready)
 - lf-5987-implicit-dealloc-exit
 - lf-7100-classtype-polymorphic
 - lf-7900-externalsym-binop
