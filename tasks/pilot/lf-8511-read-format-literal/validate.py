@@ -10,18 +10,10 @@ import subprocess
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from validator_support import materialize_fixed_test
+
 TEST_FILE = "integration_tests/read_05.f90"
-INJECTED_TEST = """\
-program main
-    implicit none
-    character(len=10) :: x
-    ! Accept READ with format literal and no unit
-    if (.false.) then
-        read '(A)', x
-    end if
-    print *, 'ok'
-end program
-"""
 
 
 def main() -> int:
@@ -33,9 +25,9 @@ def main() -> int:
         print(f"FAIL: lfortran binary not found at {lfortran}")
         return 1
 
-    if not test_path.exists() or "read '(A)'" not in test_path.read_text():
-        test_path.parent.mkdir(parents=True, exist_ok=True)
-        test_path.write_text(INJECTED_TEST)
+    test_path = materialize_fixed_test(
+        workspace, TEST_FILE, Path(__file__).with_name("task.yaml")
+    )
 
     result = subprocess.run(
         ["conda", "run", "-n", "lf-llvm11", str(lfortran), str(test_path)],

@@ -80,6 +80,17 @@ from a fresh clone - must use the lfortran-dev meta-repo build infrastructure.
 ### Commits
 - base_commit = parent of merge commit (`merge_sha^1`)
 - fixed_commit = merge commit
+- `scripts/verify_oracles.sh` checks that every fixed commit is a strict
+  descendant of its base. Because the selected fixes come from one linear
+  project history, a fixed commit may intentionally also be a later task's
+  base; the script reports those overlaps for auditability.
+
+### Rebuild behavior
+
+The harness runs setup once for the baseline and again after every agent stage.
+For LFortran, CMake/Ninja reuse the workspace build directory, so these are
+incremental rebuilds that ensure each staged C++ patch is incorporated before
+acceptance runs.
 
 ### Timeouts
 - Build: ~120s incremental, ~300s if many files changed

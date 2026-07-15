@@ -27,6 +27,39 @@ for td in "${REPO_ROOT}"/tasks/pilot/*/; do
 done
 echo "Pre-fetch done."
 
+echo "Checking task commit relationships..."
+declare -A BASE_OWNERS
+for td in "${REPO_ROOT}"/tasks/pilot/*/; do
+    ty="${td}/task.yaml"
+    [ -f "$ty" ] || continue
+    task_id=$(python3 -c "import yaml; print(yaml.safe_load(open('${ty}'))['id'])")
+    bc=$(python3 -c "import yaml; print(yaml.safe_load(open('${ty}'))['base_commit'])")
+    BASE_OWNERS["$bc"]="${BASE_OWNERS[$bc]:-} ${task_id}"
+done
+
+PREFLIGHT_FAILED=0
+for td in "${REPO_ROOT}"/tasks/pilot/*/; do
+    ty="${td}/task.yaml"
+    [ -f "$ty" ] || continue
+    task_id=$(python3 -c "import yaml; print(yaml.safe_load(open('${ty}'))['id'])")
+    fc=$(python3 -c "import yaml; print(yaml.safe_load(open('${ty}'))['fixed_commit'])")
+    bc=$(python3 -c "import yaml; print(yaml.safe_load(open('${ty}'))['base_commit'])")
+    if [ "$bc" = "$fc" ]; then
+        echo "  ERROR: ${task_id} has identical base and fixed commits"
+        PREFLIGHT_FAILED=1
+    elif ! git -C "${WORK_DIR}/lfortran" merge-base --is-ancestor "$bc" "$fc"; then
+        echo "  ERROR: ${task_id} fixed commit is not downstream of its base"
+        PREFLIGHT_FAILED=1
+    fi
+    if [ -n "${BASE_OWNERS[$fc]:-}" ]; then
+        echo "  NOTE: ${task_id} fixed commit is also a base for:${BASE_OWNERS[$fc]}"
+    fi
+done
+if [ "$PREFLIGHT_FAILED" -ne 0 ]; then
+    rm -rf "${WORK_DIR}"
+    exit 1
+fi
+
 PASS=0
 FAIL=0
 ERRORS=""
@@ -96,3 +129,6 @@ if [ -n "${ERRORS}" ]; then
 fi
 
 rm -rf "${WORK_DIR}"
+if [ -n "${ERRORS}" ]; then
+    exit 1
+fi

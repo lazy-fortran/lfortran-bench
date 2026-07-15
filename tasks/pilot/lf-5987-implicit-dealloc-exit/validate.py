@@ -10,21 +10,10 @@ import subprocess
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from validator_support import materialize_fixed_test
+
 TEST_FILE = "integration_tests/do_loop_06.f90"
-INJECTED_TEST = """\
-program do_loop_06
-    integer :: i
-    integer, allocatable :: arr(:)
-    allocate(arr(10))
-    arr = [1,2,3,4,5,6,7,8,9,10]
-    do i =1,2
-      print *, "dummy do loop"
-      exit
-    end do
-    print *, arr
-    if (any(arr /= [1,2,3,4,5,6,7,8,9,10])) error stop
-  end program
-"""
 
 
 def main() -> int:
@@ -36,9 +25,9 @@ def main() -> int:
         print(f"FAIL: lfortran binary not found at {lfortran}")
         return 1
 
-    if not test_path.exists():
-        test_path.parent.mkdir(parents=True, exist_ok=True)
-        test_path.write_text(INJECTED_TEST)
+    test_path = materialize_fixed_test(
+        workspace, TEST_FILE, Path(__file__).with_name("task.yaml")
+    )
 
     result = subprocess.run(
         ["conda", "run", "-n", "lf-llvm11", str(lfortran), str(test_path)],

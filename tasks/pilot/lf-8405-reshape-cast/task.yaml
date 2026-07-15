@@ -14,5 +14,6 @@ issue_body: |
   initializers is not handled during ASR construction.
 acceptance_hint: |
   The validator compiles and runs integration_tests/arrays_reshape_25.f90
-  using the built lfortran binary. The test reshapes an integer array
-  literal into a real 2D array.
+  from the fixed commit using the built lfortran binary. This upstream
+  regression test is compile-only: its runtime value assertions are disabled.
+  Its base-fails/fixed-passes oracle remains pending end-to-end verification.

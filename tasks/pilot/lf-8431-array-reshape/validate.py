@@ -10,21 +10,10 @@ import subprocess
 import sys
 from pathlib import Path
 
-TEST_FILE = "integration_tests/arrays_reshape_29.f90"
-INJECTED_TEST = """\
-program arrays_reshape_29
-    implicit none
-    integer, parameter :: w(4) = [1, 2, 3, 4]
-    real, parameter :: x(4) = w
-    integer, parameter :: y(4) = x
-    real :: b(2, 2) = reshape(y, [2, 2])
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from validator_support import materialize_fixed_test
 
-    if (b(1,1) /= 1.0) error stop "Mismatch at b(1,1)"
-    if (b(2,1) /= 2.0)  error stop "Mismatch at b(2,1)"
-    if (b(1,2) /= 3.0) error stop "Mismatch at b(1,2)"
-    if (b(2,2) /= 4.0)  error stop "Mismatch at b(2,2)"
-end program arrays_reshape_29
-"""
+TEST_FILE = "integration_tests/arrays_reshape_29.f90"
 
 
 def main() -> int:
@@ -36,9 +25,9 @@ def main() -> int:
         print(f"FAIL: lfortran binary not found at {lfortran}")
         return 1
 
-    if not test_path.exists():
-        test_path.parent.mkdir(parents=True, exist_ok=True)
-        test_path.write_text(INJECTED_TEST)
+    test_path = materialize_fixed_test(
+        workspace, TEST_FILE, Path(__file__).with_name("task.yaml")
+    )
 
     result = subprocess.run(
         ["conda", "run", "-n", "lf-llvm11", str(lfortran), str(test_path)],

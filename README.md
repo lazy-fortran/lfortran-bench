@@ -4,6 +4,9 @@ Compiler development benchmark for AI coding agents, targeting the LFortran comp
 
 **Status: Work in Progress**
 
+The 20 task manifests are candidates. End-to-end base-fails/fixed-passes
+oracle verification is still pending; see [ORACLE_STATUS.md](ORACLE_STATUS.md).
+
 License: [MIT](LICENSE)
 
 ## Goal

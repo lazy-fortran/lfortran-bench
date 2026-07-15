@@ -269,34 +269,6 @@ class CodexAdapter(BaseAdapter):
         return _run_command(command, workspace, timeout_seconds, stagnation_seconds=row.get("stagnation_seconds"))
 
 
-class MistralVibeAdapter(BaseAdapter):
-    name = "vibe"
-
-    def stage(self, stage_index: int, prompt: str, workspace: Path, run_dir: Path, row: dict, timeout_seconds: int) -> AgentResponse:
-        vibe_model = row.get("vibe_model")
-        if vibe_model:
-            _set_vibe_active_model(vibe_model)
-        command = [
-            "vibe",
-            "-p",
-            prompt,
-            "--auto-approve",
-            "--output",
-            "json",
-        ]
-        return _run_command(command, workspace, timeout_seconds, stagnation_seconds=row.get("stagnation_seconds"))
-
-
-def _set_vibe_active_model(model_alias: str) -> None:
-    import re
-    config_path = Path.home() / ".vibe" / "config.toml"
-    if not config_path.exists():
-        return
-    text = config_path.read_text()
-    text = re.sub(r'^active_model\s*=\s*"[^"]*"', f'active_model = "{model_alias}"', text, count=1, flags=re.MULTILINE)
-    config_path.write_text(text)
-
-
 class AiderAdapter(BaseAdapter):
     name = "aider"
 
@@ -332,7 +304,6 @@ def build_adapter(name: str) -> BaseAdapter:
         "qwen": QwenCodeAdapter,
         "claude": ClaudeCodeAdapter,
         "codex": CodexAdapter,
-        "vibe": MistralVibeAdapter,
     }
     adapter_cls = mapping.get(name)
     if adapter_cls is None:

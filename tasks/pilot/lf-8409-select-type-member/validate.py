@@ -10,39 +10,10 @@ import subprocess
 import sys
 from pathlib import Path
 
-TEST_FILE = "integration_tests/select_type_12.f90"
-INJECTED_TEST = """\
-module container_mod
-    type, abstract :: base
-    end type base
-    type, extends(base) :: child
-        integer :: x = 42
-    end type child
-    type :: container
-        class(base), allocatable :: val
-    end type container
-end module container_mod
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from validator_support import materialize_fixed_test
 
-program select_type_12
-    use container_mod
-    type(container) :: c
-    type(child) :: ch
-    integer :: t
-    class(container), allocatable :: self
-    allocate(self)
-    allocate(child::self%val)
-    select type(val => self%val)
-    type is(child)
-        print *, "child%x =", val%x
-        t=val%x
-    end select
-    if(t /= 42) then
-        print *, "Error: t should be 42, but is", t
-    else
-        print *, "Success: t is", t
-    end if
-end program select_type_12
-"""
+TEST_FILE = "integration_tests/select_type_12.f90"
 
 
 def main() -> int:
@@ -54,9 +25,9 @@ def main() -> int:
         print(f"FAIL: lfortran binary not found at {lfortran}")
         return 1
 
-    if not test_path.exists():
-        test_path.parent.mkdir(parents=True, exist_ok=True)
-        test_path.write_text(INJECTED_TEST)
+    test_path = materialize_fixed_test(
+        workspace, TEST_FILE, Path(__file__).with_name("task.yaml")
+    )
 
     result = subprocess.run(
         ["conda", "run", "-n", "lf-llvm11", str(lfortran), str(test_path)],

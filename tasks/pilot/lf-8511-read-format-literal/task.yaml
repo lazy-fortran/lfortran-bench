@@ -21,8 +21,9 @@ issue_body: |
   Error message at base commit:
   syntax error: Token '(A)' (of type 'string') is unexpected here
 acceptance_hint: |
-  The validator compiles and runs integration_tests/read_05.f90
-  using the built lfortran binary. The test uses "read '(A)', x"
+  The validator compiles and runs integration_tests/read_05.f90 from
+  the fixed commit using the built lfortran binary. The test uses "read '(A)', x"
   inside a dead branch (if .false.) so it only checks that the
   parser accepts the syntax. At the base commit, the parser
-  rejects the format literal after READ.
+  is expected to reject the format literal after READ; that oracle
+  remains pending end-to-end verification.

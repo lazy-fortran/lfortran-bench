@@ -10,24 +10,10 @@ import subprocess
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from validator_support import materialize_fixed_test
+
 TEST_FILE = "integration_tests/implied_do_loops11.f90"
-INJECTED_TEST = """\
-program implied_do_loops11
-    implicit none
-    integer i
-    integer, parameter:: nmax = 5, a(nmax) = [1,2,4,8,8], &
-        b(nmax-1) = [ ( a(i)-a(i-1), i=2,nmax ) ]
-    integer:: c(nmax-1) =  [ ( a(i)-a(i-1), i=2,nmax ) ]
-    print "(A,5(1X,I0))", 'a =' ,a
-    if (any(a /= [1,2,4,8,8])) error stop
-    print "(A,4(1X,I0))", 'b = ',b
-    if (any(b /= [1,2,4,0])) error stop
-    print "(A,4(1X,I0))", 'c = ',c
-    if (any(c /= [1,2,4,0])) error stop
-    print "(A,4(1X,I0))", '? = ', ( a(i)-a(i-1), i=2,nmax )
-    if (any([ (a(i)-a(i-1), i=2,nmax) ] /= [1,2,4,0])) error stop
-end program implied_do_loops11
-"""
 
 
 def main() -> int:
@@ -39,9 +25,9 @@ def main() -> int:
         print(f"FAIL: lfortran binary not found at {lfortran}")
         return 1
 
-    if not test_path.exists():
-        test_path.parent.mkdir(parents=True, exist_ok=True)
-        test_path.write_text(INJECTED_TEST)
+    test_path = materialize_fixed_test(
+        workspace, TEST_FILE, Path(__file__).with_name("task.yaml")
+    )
 
     result = subprocess.run(
         ["conda", "run", "-n", "lf-llvm11", str(lfortran), str(test_path)],

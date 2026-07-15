@@ -16,7 +16,9 @@ from lfortran_bench.adapters import AgentResponse, build_adapter
 from lfortran_bench.judges import run_claude_judge, run_codex_judge
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-DEVSTRAL_SCRIPTS = REPO_ROOT.parent / "devstral-infra" / "scripts"
+DEVSTRAL_SCRIPTS = Path(
+    os.environ.get("LFORTRAN_BENCH_DEVSTRAL_SCRIPTS", REPO_ROOT.parent / "devstral-infra" / "scripts")
+)
 
 
 @dataclass
@@ -359,16 +361,25 @@ def local_model_env(row: dict) -> dict[str, str]:
     return env
 
 
+def devstral_script(name: str) -> Path:
+    path = DEVSTRAL_SCRIPTS / name
+    if not path.is_file():
+        raise RuntimeError(
+            f"missing local-model helper {path}; set LFORTRAN_BENCH_DEVSTRAL_SCRIPTS"
+        )
+    return path
+
+
 def switch_local_model(row: dict) -> float:
     if not row.get("local_model_alias"):
         return 0.0
     instance = row.get("local_instance")
     started = time.time()
     subprocess.run(
-        ["bash", str(DEVSTRAL_SCRIPTS / "server_stop_llamacpp.sh"), "all"],
+        ["bash", str(devstral_script("server_stop_llamacpp.sh")), "all"],
         check=False, capture_output=True, text=True,
     )
-    start_args = ["bash", str(DEVSTRAL_SCRIPTS / "server_start_llamacpp.sh")]
+    start_args = ["bash", str(devstral_script("server_start_llamacpp.sh"))]
     if instance:
         start_args.append(instance)
     subprocess.run(
@@ -387,9 +398,9 @@ def restore_default_model(suite: dict) -> None:
         return
     env = os.environ.copy()
     env["LLAMACPP_MODEL_ALIAS"] = alias
-    subprocess.run(["bash", str(DEVSTRAL_SCRIPTS / "server_stop_llamacpp.sh")], check=False, capture_output=True, text=True)
+    subprocess.run(["bash", str(devstral_script("server_stop_llamacpp.sh"))], check=False, capture_output=True, text=True)
     subprocess.run(
-        ["bash", str(DEVSTRAL_SCRIPTS / "server_start_llamacpp.sh")],
+        ["bash", str(devstral_script("server_start_llamacpp.sh"))],
         check=True,
         capture_output=True,
         text=True,

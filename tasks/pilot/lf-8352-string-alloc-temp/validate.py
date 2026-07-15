@@ -10,23 +10,10 @@ import subprocess
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from validator_support import materialize_fixed_test
+
 TEST_FILE = "integration_tests/string_69.f90"
-INJECTED_TEST = """\
-program string_69
-  implicit none
-  character(len=7) :: value
-  character(len=:), allocatable :: keywords(:)
-  integer :: ii
-   ii = 7
-  value = "version"
-  keywords = [character(len=ii) :: value]
-  if (len(keywords) /= 7) error stop
-  if (keywords(1) /= "version") error stop
-  value = "usage"
-  keywords = [character(len=ii) :: keywords, value]
-  if (keywords(2) /= "usage") error stop
-end program
-"""
 
 
 def main() -> int:
@@ -38,9 +25,9 @@ def main() -> int:
         print(f"FAIL: lfortran binary not found at {lfortran}")
         return 1
 
-    if not test_path.exists():
-        test_path.parent.mkdir(parents=True, exist_ok=True)
-        test_path.write_text(INJECTED_TEST)
+    test_path = materialize_fixed_test(
+        workspace, TEST_FILE, Path(__file__).with_name("task.yaml")
+    )
 
     result = subprocess.run(
         ["conda", "run", "-n", "lf-llvm11", str(lfortran), str(test_path)],

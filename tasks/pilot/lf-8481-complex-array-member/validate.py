@@ -10,30 +10,10 @@ import subprocess
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from validator_support import materialize_fixed_test
+
 TEST_FILE = "integration_tests/complex_array_member_access.f90"
-INJECTED_TEST = """\
-program test
-    complex, parameter :: x(2) = (1.0, 0.3)
-    real :: y_re(2), y_im(2)
-
-    ! Test extracting real parts
-    y_re = x%re
-    print *, "Real parts:", y_re
-
-    ! Test extracting imaginary parts
-    y_im = x%im
-    print *, "Imaginary parts:", y_im
-
-    ! Assert checks
-    if (abs(y_re(1) - 1.0) > 1e-5) error stop "Real part 1 failed"
-    if (abs(y_re(2) - 1.0) > 1e-5) error stop "Real part 2 failed"
-    if (abs(y_im(1) - 0.3) > 1e-5) error stop "Imaginary part 1 failed"
-    if (abs(y_im(2) - 0.3) > 1e-5) error stop "Imaginary part 2 failed"
-
-    print *, x%re, x%im
-    print *, "All tests passed!"
-end
-"""
 
 
 def main() -> int:
@@ -45,9 +25,9 @@ def main() -> int:
         print(f"FAIL: lfortran binary not found at {lfortran}")
         return 1
 
-    if not test_path.exists():
-        test_path.parent.mkdir(parents=True, exist_ok=True)
-        test_path.write_text(INJECTED_TEST)
+    test_path = materialize_fixed_test(
+        workspace, TEST_FILE, Path(__file__).with_name("task.yaml")
+    )
 
     result = subprocess.run(
         ["conda", "run", "-n", "lf-llvm11", str(lfortran), str(test_path)],
