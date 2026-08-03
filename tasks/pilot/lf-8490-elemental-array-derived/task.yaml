@@ -1,0 +1,18 @@
+id: lf-8490-elemental-array-derived
+title: "lfortran: fix elemental function returning derived type in array context"
+repo_url: https://github.com/lfortran/lfortran.git
+issue_url: https://github.com/lfortran/lfortran/pull/8490
+base_commit: 3bf4d9a2e7576487f87b4e6f7476d3e7a15409e1
+fixed_commit: 5e9073ce17883f06e6c5815eb349d9ac2a508940
+setup_commands:
+  - "conda run -n lf-llvm11 bash -c 'cd {workspace} && bash build0.sh && cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DWITH_LLVM=yes -DCMAKE_BUILD_TYPE=Debug -DWITH_ZSTD=no -DWITH_ZLIB=no -DWITH_RUNTIME_STACKTRACE=yes && ninja -C build'"
+acceptance_commands:
+  - "python3 {task_dir}/validate.py {workspace}"
+issue_body: |
+  Elemental functions that return a derived type fail when called on
+  arrays within submodule implementations. The compiler does not
+  correctly handle the array-valued elemental result for derived types.
+acceptance_hint: |
+  The validator compiles and runs integration_tests/submodule_13.f90
+  using the built lfortran binary. The test calls an elemental
+  type-bound function on an array of derived types.

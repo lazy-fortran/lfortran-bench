@@ -1,0 +1,18 @@
+id: lf-8421-string-bindc
+title: "lfortran: fix bind(c) character array interoperability"
+repo_url: https://github.com/lfortran/lfortran.git
+issue_url: https://github.com/lfortran/lfortran/pull/8421
+base_commit: 1900e28db0ad16a78cedae35e2dd2dffca54661e
+fixed_commit: d8d25738bc265f9c3c807f203815746c2d811257
+setup_commands:
+  - "conda run -n lf-llvm11 bash -c 'cd {workspace} && bash build0.sh && cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DWITH_LLVM=yes -DCMAKE_BUILD_TYPE=Debug -DWITH_ZSTD=no -DWITH_ZLIB=no -DWITH_RUNTIME_STACKTRACE=yes && ninja -C build'"
+acceptance_commands:
+  - "python3 {task_dir}/validate.py {workspace}"
+issue_body: |
+  Character arguments in bind(c) interfaces are not handled correctly.
+  Functions with character(kind=c_char) arguments fail to compile when
+  used with both scalar and array character variables.
+acceptance_hint: |
+  The validator compiles and runs integration_tests/bindc_07.f90 using
+  the built lfortran binary. The test exercises bind(c) functions with
+  various character buffer types.

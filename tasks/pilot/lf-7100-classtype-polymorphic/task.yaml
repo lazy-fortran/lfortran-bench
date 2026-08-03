@@ -1,0 +1,19 @@
+id: lf-7100-classtype-polymorphic
+title: "lfortran: fix elemental function with polymorphic class argument"
+repo_url: https://github.com/lfortran/lfortran.git
+issue_url: https://github.com/lfortran/lfortran/pull/7100
+base_commit: ff19c6bda137cb561c6eb722ee0b291fd554d8a7
+fixed_commit: 2c3ecf2d1fc1be267f85ffadb9831001cd590ae5
+setup_commands:
+  - "conda run -n lf-llvm11 bash -c 'cd {workspace} && bash build0.sh && cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DWITH_LLVM=yes -DCMAKE_BUILD_TYPE=Debug -DWITH_ZSTD=no -DWITH_ZLIB=no -DWITH_RUNTIME_STACKTRACE=yes && ninja -C build'"
+acceptance_commands:
+  - "python3 {task_dir}/validate.py {workspace}"
+issue_body: |
+  Elemental functions that accept a polymorphic class(*) argument fail
+  to compile when called with a derived type that extends the base
+  class. The compiler does not resolve the type hierarchy correctly
+  for elemental dispatch.
+acceptance_hint: |
+  The validator compiles and runs integration_tests/derived_types_53.f90
+  using the built lfortran binary. The test defines an abstract type
+  hierarchy with elemental functions and verifies polymorphic dispatch.

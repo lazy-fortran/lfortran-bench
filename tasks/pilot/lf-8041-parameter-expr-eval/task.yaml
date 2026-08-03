@@ -1,0 +1,28 @@
+id: lf-8041-parameter-expr-eval
+title: "lfortran: fix compile-time evaluation of parameter expressions with intrinsics"
+repo_url: https://github.com/lfortran/lfortran.git
+issue_url: https://github.com/lfortran/lfortran/pull/8041
+base_commit: 38c30cfb0f5435e4974fcc139d47882332819a64
+fixed_commit: a938c4cf1fba3476fd32277ed7d6c1985371d65f
+setup_commands:
+  - "conda run -n lf-llvm11 bash -c 'cd {workspace} && bash build0.sh && cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DWITH_LLVM=yes -DCMAKE_BUILD_TYPE=Debug -DWITH_ZSTD=no -DWITH_ZLIB=no -DWITH_RUNTIME_STACKTRACE=yes && ninja -C build'"
+acceptance_commands:
+  - "python3 {task_dir}/validate.py {workspace}"
+issue_body: |
+  An unnecessary error check in the semantics pass rejects valid Fortran
+  programs that use intrinsic functions (such as selected_real_kind,
+  merge, minloc, abs, sum, precision) in parameter initialization
+  expressions. The error "RHS must reduce to a constant expression" is
+  raised even when the RHS is a valid compile-time constant expression.
+
+  The fix removes the overly strict check that was blocking these
+  working programs.
+
+  Error message at base commit:
+  semantic error: RHS must reduce to a constant expression.
+acceptance_hint: |
+  The validator compiles and runs integration_tests/intrinsics_391.f90
+  using the built lfortran binary. The test declares several integer
+  parameters initialized with chained intrinsic calls (selected_real_kind,
+  merge, minloc, abs, sum) and verifies their values at runtime. At the
+  base commit, the semantics pass rejects the parameter declarations.

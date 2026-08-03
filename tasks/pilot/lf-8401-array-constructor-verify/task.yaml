@@ -1,0 +1,28 @@
+id: lf-8401-array-constructor-verify
+title: "lfortran: fix ASR verify condition for compile-time constant arrays"
+repo_url: https://github.com/lfortran/lfortran.git
+issue_url: https://github.com/lfortran/lfortran/pull/8401
+base_commit: 6cbc2cc1cfb9cd8e02388b80879dbdb973415b23
+fixed_commit: 8f22f10ad17b8ad2c6128c464218e3c8baf6fc64
+setup_commands:
+  - "conda run -n lf-llvm11 bash -c 'cd {workspace} && bash build0.sh && cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DWITH_LLVM=yes -DCMAKE_BUILD_TYPE=Debug -DWITH_ZSTD=no -DWITH_ZLIB=no -DWITH_RUNTIME_STACKTRACE=yes && ninja -C build'"
+acceptance_commands:
+  - "python3 {task_dir}/validate.py {workspace}"
+issue_body: |
+  The ASR verify pass incorrectly requires that all array constructor
+  initializations reduce to compile-time constants. This check is too
+  strict: it only allows StructConstructor elements but should allow
+  any valid array constructor element (including implied-do loops with
+  character literals).
+
+  The fix is to relax the condition in asr_verify.cpp to accept all
+  array constructor elements, not just StructConstructor ones.
+
+  Error message at base commit:
+  ASR verify pass error: Initialisation of input must reduce to a
+  compile time constant.
+acceptance_hint: |
+  The validator compiles and runs integration_tests/arrays_constructor_01.f90
+  using the built lfortran binary. The test should compile and run without
+  errors. At the base commit, the ASR verify pass rejects the implied-do
+  array constructor, causing a compilation error.

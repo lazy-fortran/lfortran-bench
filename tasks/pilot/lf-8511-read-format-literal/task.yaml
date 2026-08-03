@@ -1,0 +1,29 @@
+id: lf-8511-read-format-literal
+title: "lfortran: accept READ with format literal and no unit"
+repo_url: https://github.com/lfortran/lfortran.git
+issue_url: https://github.com/lfortran/lfortran/pull/8511
+base_commit: 94b3e1b4f2ced0c50e665f9ab9c67748002b5b5f
+fixed_commit: 976159c6db93e7f1af2e0c1dbe5ed9908f9219ae
+setup_commands:
+  - "conda run -n lf-llvm11 bash -c 'cd {workspace} && bash build0.sh && cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DWITH_LLVM=yes -DCMAKE_BUILD_TYPE=Debug -DWITH_ZSTD=no -DWITH_ZLIB=no -DWITH_RUNTIME_STACKTRACE=yes && ninja -C build'"
+acceptance_commands:
+  - "python3 {task_dir}/validate.py {workspace}"
+issue_body: |
+  The parser rejects the standard-conforming Fortran READ statement
+  form "READ '(A)', x" where a format literal is given without an
+  explicit unit number. This form is valid Fortran (R1210 in the
+  standard) and means read from standard input with the given format.
+
+  The fix adds a parser rule for "READ <string>, <expr_list>" and
+  updates the semantics pass to honor m_format by setting the format
+  and marking the statement as formatted.
+
+  Error message at base commit:
+  syntax error: Token '(A)' (of type 'string') is unexpected here
+acceptance_hint: |
+  The validator compiles and runs integration_tests/read_05.f90 from
+  the fixed commit using the built lfortran binary. The test uses "read '(A)', x"
+  inside a dead branch (if .false.) so it only checks that the
+  parser accepts the syntax. At the base commit, the parser
+  is expected to reject the format literal after READ; that oracle
+  remains pending end-to-end verification.

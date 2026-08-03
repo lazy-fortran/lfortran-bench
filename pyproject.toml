@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lfortran-bench"
+version = "0.1.0"
+description = "Compiler development benchmark for AI coding agents, targeting LFortran"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "PyYAML>=6.0",
+]
+
+[project.scripts]
+lfortran-bench = "lfortran_bench.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["lfortran_bench*"]

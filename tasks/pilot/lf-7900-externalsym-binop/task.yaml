@@ -1,0 +1,18 @@
+id: lf-7900-externalsym-binop
+title: "lfortran: fix size() on array of derived type from external module"
+repo_url: https://github.com/lfortran/lfortran.git
+issue_url: https://github.com/lfortran/lfortran/pull/7900
+base_commit: 1850d0bcfe86934bff7ddd35a7def28a580eca51
+fixed_commit: 13b502da9a5372590b0d1264e18a494fddbb9b70
+setup_commands:
+  - "conda run -n lf-llvm11 bash -c 'cd {workspace} && bash build0.sh && cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DWITH_LLVM=yes -DCMAKE_BUILD_TYPE=Debug -DWITH_ZSTD=no -DWITH_ZLIB=no -DWITH_RUNTIME_STACKTRACE=yes && ninja -C build'"
+acceptance_commands:
+  - "python3 {task_dir}/validate.py {workspace}"
+issue_body: |
+  Calling size() on an array of derived types imported from an external
+  module fails. The compiler does not correctly resolve the external
+  symbol for the derived type when computing array size.
+acceptance_hint: |
+  The validator compiles and runs integration_tests/arrays_13_size.f90
+  using the built lfortran binary. The test creates an array of external
+  module derived types and checks size().

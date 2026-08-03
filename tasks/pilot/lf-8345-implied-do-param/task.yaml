@@ -1,0 +1,19 @@
+id: lf-8345-implied-do-param
+title: "lfortran: fix implied do loop in parameter array initialization"
+repo_url: https://github.com/lfortran/lfortran.git
+issue_url: https://github.com/lfortran/lfortran/pull/8345
+base_commit: 986e6c46509043d7b721e08287aeccfb830c0e6c
+fixed_commit: 04b604d8fb984ac82e32c7fee427c859cc5286c2
+setup_commands:
+  - "conda run -n lf-llvm11 bash -c 'cd {workspace} && bash build0.sh && cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DWITH_LLVM=yes -DCMAKE_BUILD_TYPE=Debug -DWITH_ZSTD=no -DWITH_ZLIB=no -DWITH_RUNTIME_STACKTRACE=yes && ninja -C build'"
+acceptance_commands:
+  - "python3 {task_dir}/validate.py {workspace}"
+issue_body: |
+  Implied do loops that reference other parameter arrays in the body
+  expression fail when used in parameter initialization. The compiler
+  does not evaluate the implied do loop body correctly when it contains
+  array element references to other parameters.
+acceptance_hint: |
+  The validator compiles and runs integration_tests/implied_do_loops11.f90
+  using the built lfortran binary. The test uses implied do loops with
+  parameter array references in the body expression.

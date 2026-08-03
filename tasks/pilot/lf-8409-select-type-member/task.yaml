@@ -1,0 +1,19 @@
+id: lf-8409-select-type-member
+title: "lfortran: fix select type with allocatable class member"
+repo_url: https://github.com/lfortran/lfortran.git
+issue_url: https://github.com/lfortran/lfortran/pull/8409
+base_commit: e9a03c04e222563671143ff9346dd081695690c9
+fixed_commit: 0dabe47b3cea6ce781f8c5aebff48fca5a1aff9c
+setup_commands:
+  - "conda run -n lf-llvm11 bash -c 'cd {workspace} && bash build0.sh && cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DWITH_LLVM=yes -DCMAKE_BUILD_TYPE=Debug -DWITH_ZSTD=no -DWITH_ZLIB=no -DWITH_RUNTIME_STACKTRACE=yes && ninja -C build'"
+acceptance_commands:
+  - "python3 {task_dir}/validate.py {workspace}"
+issue_body: |
+  Select type on an allocatable class member inside a container type
+  fails to access the derived type members. The associate name does
+  not correctly resolve the child type when accessed through a
+  container's allocatable class component.
+acceptance_hint: |
+  The validator compiles and runs integration_tests/select_type_12.f90
+  using the built lfortran binary. The test accesses a child type
+  member through select type on an allocatable class component.

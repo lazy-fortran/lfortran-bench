@@ -1,0 +1,19 @@
+id: lf-8405-reshape-cast
+title: "lfortran: fix reshape with integer-to-real cast in initializer"
+repo_url: https://github.com/lfortran/lfortran.git
+issue_url: https://github.com/lfortran/lfortran/pull/8405
+base_commit: 1dd34267f6aa6725b191d73d6be33abac374ac3f
+fixed_commit: 5fb99d02a672c6423fe7497124c2b7ba50ab131c
+setup_commands:
+  - "conda run -n lf-llvm11 bash -c 'cd {workspace} && bash build0.sh && cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DWITH_LLVM=yes -DCMAKE_BUILD_TYPE=Debug -DWITH_ZSTD=no -DWITH_ZLIB=no -DWITH_RUNTIME_STACKTRACE=yes && ninja -C build'"
+acceptance_commands:
+  - "python3 {task_dir}/validate.py {workspace}"
+issue_body: |
+  Reshape with an integer array literal used to initialize a real array
+  variable fails. The implicit integer-to-real cast inside reshape
+  initializers is not handled during ASR construction.
+acceptance_hint: |
+  The validator compiles and runs integration_tests/arrays_reshape_25.f90
+  from the fixed commit using the built lfortran binary. This upstream
+  regression test is compile-only: its runtime value assertions are disabled.
+  Its base-fails/fixed-passes oracle remains pending end-to-end verification.

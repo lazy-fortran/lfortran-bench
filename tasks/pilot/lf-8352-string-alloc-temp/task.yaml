@@ -1,0 +1,19 @@
+id: lf-8352-string-alloc-temp
+title: "lfortran: fix allocatable character array with runtime-length constructor"
+repo_url: https://github.com/lfortran/lfortran.git
+issue_url: https://github.com/lfortran/lfortran/pull/8352
+base_commit: 411b57ffce9198f4b954fb56a8dc7a3633985c30
+fixed_commit: 986e6c46509043d7b721e08287aeccfb830c0e6c
+setup_commands:
+  - "conda run -n lf-llvm11 bash -c 'cd {workspace} && bash build0.sh && cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DWITH_LLVM=yes -DCMAKE_BUILD_TYPE=Debug -DWITH_ZSTD=no -DWITH_ZLIB=no -DWITH_RUNTIME_STACKTRACE=yes && ninja -C build'"
+acceptance_commands:
+  - "python3 {task_dir}/validate.py {workspace}"
+issue_body: |
+  Allocatable character arrays with runtime-length array constructors
+  (using [character(len=var) :: ...]) fail to compile. The compiler
+  does not correctly handle temporary allocation for character array
+  constructors with non-constant length.
+acceptance_hint: |
+  The validator compiles and runs integration_tests/string_69.f90 using
+  the built lfortran binary. The test creates allocatable character
+  arrays with runtime-determined lengths and appends elements.

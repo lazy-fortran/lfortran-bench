@@ -1,0 +1,19 @@
+id: lf-8481-complex-array-member
+title: "lfortran: fix complex array member access (%re, %im)"
+repo_url: https://github.com/lfortran/lfortran.git
+issue_url: https://github.com/lfortran/lfortran/pull/8481
+base_commit: 1c2a55e18ca9744dfd8b84c99a473f5fdf10cbad
+fixed_commit: 28fd430283b680bbb9a2c3a0d7e6ea660c8b6413
+setup_commands:
+  - "conda run -n lf-llvm11 bash -c 'cd {workspace} && bash build0.sh && cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DWITH_LLVM=yes -DCMAKE_BUILD_TYPE=Debug -DWITH_ZSTD=no -DWITH_ZLIB=no -DWITH_RUNTIME_STACKTRACE=yes && ninja -C build'"
+acceptance_commands:
+  - "python3 {task_dir}/validate.py {workspace}"
+issue_body: |
+  Accessing %re and %im members on complex parameter arrays fails to
+  compile. The compiler does not handle member access on complex arrays
+  declared as parameters.
+acceptance_hint: |
+  The validator compiles and runs
+  integration_tests/complex_array_member_access.f90 using the built
+  lfortran binary. The test extracts real and imaginary parts from a
+  complex parameter array.

@@ -1,0 +1,19 @@
+id: lf-8373-select-type-associate
+title: "lfortran: fix select type with pointer association"
+repo_url: https://github.com/lfortran/lfortran.git
+issue_url: https://github.com/lfortran/lfortran/pull/8373
+base_commit: b2943d67b010f02608606423efc8dd8af139486f
+fixed_commit: 92a9234076a2f05f34615022a1fcdf0d51f8238e
+setup_commands:
+  - "conda run -n lf-llvm11 bash -c 'cd {workspace} && bash build0.sh && cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DWITH_LLVM=yes -DCMAKE_BUILD_TYPE=Debug -DWITH_ZSTD=no -DWITH_ZLIB=no -DWITH_RUNTIME_STACKTRACE=yes && ninja -C build'"
+acceptance_commands:
+  - "python3 {task_dir}/validate.py {workspace}"
+issue_body: |
+  Select type blocks with pointer association fail when the associate
+  name is used to modify the polymorphic argument. The pointer
+  association inside the select type guard does not correctly resolve
+  the underlying type, causing runtime errors.
+acceptance_hint: |
+  The validator compiles and runs integration_tests/select_type_11.f90
+  using the built lfortran binary. The test modifies an array through
+  a pointer inside a select type block and verifies the mutation.

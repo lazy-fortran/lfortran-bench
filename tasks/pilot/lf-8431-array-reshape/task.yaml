@@ -1,0 +1,19 @@
+id: lf-8431-array-reshape
+title: "lfortran: fix reshape with parameter array type conversion"
+repo_url: https://github.com/lfortran/lfortran.git
+issue_url: https://github.com/lfortran/lfortran/pull/8431
+base_commit: 8b3d83603b6825fdf0acee900c4f175e987a726d
+fixed_commit: 3988fa00d3d37a7ec69b02e8c30cb918cf7c555a
+setup_commands:
+  - "conda run -n lf-llvm11 bash -c 'cd {workspace} && bash build0.sh && cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DWITH_LLVM=yes -DCMAKE_BUILD_TYPE=Debug -DWITH_ZSTD=no -DWITH_ZLIB=no -DWITH_RUNTIME_STACKTRACE=yes && ninja -C build'"
+acceptance_commands:
+  - "python3 {task_dir}/validate.py {workspace}"
+issue_body: |
+  Reshape with parameter arrays that involve implicit type conversion
+  (integer parameter assigned to real parameter, then reshaped) fails
+  at compile time. The compiler does not handle chained parameter type
+  conversions in reshape arguments.
+acceptance_hint: |
+  The validator compiles and runs integration_tests/arrays_reshape_29.f90
+  using the built lfortran binary. The test reshapes a parameter array
+  that involves integer-to-real conversion.

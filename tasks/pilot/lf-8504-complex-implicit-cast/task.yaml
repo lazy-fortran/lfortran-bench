@@ -1,0 +1,19 @@
+id: lf-8504-complex-implicit-cast
+title: "lfortran: fix implicit casting for complex types"
+repo_url: https://github.com/lfortran/lfortran.git
+issue_url: https://github.com/lfortran/lfortran/pull/8504
+base_commit: e8319e21a71facb47b764f4b687d645771685d14
+fixed_commit: 727536e547babd7ababad245e7ac5a7f4352f474
+setup_commands:
+  - "conda run -n lf-llvm11 bash -c 'cd {workspace} && bash build0.sh && cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DWITH_LLVM=yes -DCMAKE_BUILD_TYPE=Debug -DWITH_ZSTD=no -DWITH_ZLIB=no -DWITH_RUNTIME_STACKTRACE=yes && ninja -C build'"
+acceptance_commands:
+  - "python3 {task_dir}/validate.py {workspace}"
+issue_body: |
+  Implicit casting between complex types and other numeric types
+  (integer, real) is not handled correctly. Assignments such as
+  complex-to-real, integer-to-complex, and complex kind conversions
+  produce compilation errors or incorrect results.
+acceptance_hint: |
+  The validator compiles and runs integration_tests/complex_implicit_cast.f90
+  using the built lfortran binary. The test exercises various implicit
+  casting paths between complex, real, and integer types.
