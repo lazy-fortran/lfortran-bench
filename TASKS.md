@@ -15,20 +15,20 @@ in C++ code with integration test cases.
 ### Semantics / Type System
 | # | PR | Files | Test file | Pattern | Title |
 |---|---|---|---|---|---|
-| 1 | #8504 | 7 | complex_implicit_cast.f90 | inject | Fix implicit cast for complex numbers |
-| 2 | #8373 | 3 | select_type_11.f90 | inject | Handle Associate for class(*) vars |
+| 1 | #7222 | 3 | operator_overloading_10.f90 | inject | Fix operator overloading with multiple interfaces |
+| 2 | #7039 | 4 | derived_types_49.f90 | inject | Fix extended derived types assignment |
 | 3 | #7100 | 3 | derived_types_53.f90 | inject | ClassType to ClassType polymorphic arg conversion |
-| 4 | #8200 | 2 | derived_types_72.f90 | exists | Get correct struct symbol from implied do loop |
-| 5 | #8409 | 3 | select_type_12.f90 | inject | Handle StructInstanceMember association in select type |
+| 4 | #8409 | 3 | select_type_12.f90 | inject | Handle StructInstanceMember association in select type |
 
 ### Array Operations
 | # | PR | Files | Test file | Pattern | Title |
 |---|---|---|---|---|---|
-| 6 | #8490 | 3 | submodule_13.f90 | inject | Fix calling elemental function on array of derived types |
-| 7 | #8481 | 4 | complex_array_member_access.f90 | inject | Fix complex array member access (%re and %im) |
-| 8 | #8431 | 4 | arrays_reshape_29.f90 | inject | Handle some cases of array reshape |
-| 9 | #8405 | 4 | arrays_reshape_25.f90 | inject | Handle using reshape with casting |
-| 10 | #8401 | 2 | arrays_constructor_01.f90 | exists | Fix verify condition for compile-time constant arrays |
+| 5 | #8490 | 3 | submodule_13.f90 | inject | Fix calling elemental function on array of derived types |
+| 6 | #8481 | 4 | complex_array_member_access.f90 | inject | Fix complex array member access (%re and %im) |
+| 7 | #8431 | 4 | arrays_reshape_29.f90 | inject | Handle some cases of array reshape |
+| 8 | #8405 | 4 | arrays_reshape_25.f90 | inject | Handle using reshape with casting |
+| 9 | #8401 | 2 | arrays_constructor_01.f90 | inject | Fix verify condition for compile-time constant arrays |
+| 10 | #6943 | 3 | intrinsics_374.f90 | inject | Fix findloc for 2-D arrays |
 
 ### String / I/O
 | # | PR | Files | Test file | Pattern | Title |
@@ -41,16 +41,17 @@ in C++ code with integration test cases.
 ### Code Generation
 | # | PR | Files | Test file | Pattern | Title |
 |---|---|---|---|---|---|
-| 15 | #8390 | 4 | nested_16.f90 | exists | Handle nested structconstructor in declaring global vars |
-| 16 | #8345 | 9 | implied_do_loops11.f90 | inject | Compile-time evaluation of implied-do loops for parameter arrays |
-| 17 | #7900 | 3 | arrays_13_size.f90 | inject | Correct ExternalSymbol condition for FunctionCall in IntegerBinOp |
+| 15 | #8345 | 9 | implied_do_loops11.f90 | inject | Compile-time evaluation of implied-do loops for parameter arrays |
+| 16 | #7900 | 3 | arrays_13_size.f90 | inject | Correct ExternalSymbol condition for FunctionCall in IntegerBinOp |
 
 ### Struct / Derived Types
 | # | PR | Files | Test file | Pattern | Title |
 |---|---|---|---|---|---|
-| 18 | #8150 | 3 | intrinsics_392.f90 | inject | Handle optional args in nested subroutines |
-| 19 | #8041 | 3 | intrinsics_391.f90 | inject | Fix compile-time eval of parameter expressions with intrinsics |
-| 20 | #5987 | 3 | do_loop_06.f90 | inject | Insert implicit_deallocate before exit only in block constructs |
+| 17 | #8150 | 3 | intrinsics_392.f90 | inject | Handle optional args in nested subroutines |
+| 18 | #8041 | 3 | intrinsics_391.f90 | inject | Fix compile-time eval of parameter expressions with intrinsics |
+| 19 | #5987 | 3 | do_loop_06.f90 | inject | Insert implicit_deallocate before exit only in block constructs |
+
+| 20 | #8312 | 4 | common_14.f90 | inject | Fix common block variable access from contained subroutine |
 
 ## Test patterns
 

@@ -13,6 +13,7 @@ issue_body: |
   Functions with character(kind=c_char) arguments fail to compile when
   used with both scalar and array character variables.
 acceptance_hint: |
-  The validator compiles and runs integration_tests/bindc_07.f90 using
-  the built lfortran binary. The test exercises bind(c) functions with
-  various character buffer types.
+  The validator compiles and runs integration_tests/bindc_07.f90 together
+  with integration_tests/bindc_07.c using the built lfortran binary. The
+  C file provides dummy bind(c) functions that the Fortran program calls
+  to exercise character buffer interoperability.
