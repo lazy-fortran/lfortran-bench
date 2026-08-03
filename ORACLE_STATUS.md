@@ -12,7 +12,7 @@ End-to-end oracle verification (base fails, fixed passes) is still pending.
 - lf-6943-findloc-2d-array (replaced lf-8200)
 - lf-7039-extended-type-assign (replaced lf-8373)
 - lf-7222-operator-overload-multi (replaced lf-8390)
-- lf-7399-move-alloc-dealloc (replaced lf-8504)
+- lf-8312-common-block-use (replaced lf-7399)
 - lf-8150-optional-nested
 - lf-8345-implied-do-param
 - lf-8352-string-alloc-temp
