@@ -10,41 +10,10 @@ import subprocess
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from validator_support import materialize_fixed_test
+
 TEST_FILE = "integration_tests/derived_types_49.f90"
-INJECTED_TEST = """\
-module derived_types_49_m
-    implicit none
-    public :: base, derived
-
-    type, abstract :: base
-        integer :: a
-    end type base
-
-    type, extends(base) :: derived
-        integer :: b
-    end type derived
-
-    type, extends(derived) :: derived2
-        integer :: c
-        integer :: d
-    end type derived2
-end module derived_types_49_m
-
-program derived_types_49
-  use derived_types_49_m
-  implicit none
-
-  type(derived2) :: set0, set1
-  set0 = derived2(10, 20, 30, 40)
-
-  set1 = set0
-
-  if (set1%a /= set0%a) error stop
-  if (set1%b /= set0%b) error stop
-  if (set1%c /= set0%c) error stop
-  if (set1%d /= set0%d) error stop
-end program derived_types_49
-"""
 
 
 def main() -> int:
@@ -56,9 +25,9 @@ def main() -> int:
         print(f"FAIL: lfortran binary not found at {lfortran}")
         return 1
 
-    # Always inject: overwrite any stale or mismatched file from the workspace
-    test_path.parent.mkdir(parents=True, exist_ok=True)
-    test_path.write_text(INJECTED_TEST)
+    test_path = materialize_fixed_test(
+        workspace, TEST_FILE, Path(__file__).with_name("task.yaml")
+    )
 
     result = subprocess.run(
         ["conda", "run", "-n", "lf-llvm11", str(lfortran), str(test_path)],

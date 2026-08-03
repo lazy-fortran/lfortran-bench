@@ -23,12 +23,12 @@ in C++ code with integration test cases.
 ### Array Operations
 | # | PR | Files | Test file | Pattern | Title |
 |---|---|---|---|---|---|
-| 5 | #6943 | 3 | intrinsics_374.f90 | inject | Fix findloc for 2-D arrays |
-| 6 | #8490 | 3 | submodule_13.f90 | inject | Fix calling elemental function on array of derived types |
-| 7 | #8481 | 4 | complex_array_member_access.f90 | inject | Fix complex array member access (%re and %im) |
-| 8 | #8431 | 4 | arrays_reshape_29.f90 | inject | Handle some cases of array reshape |
-| 9 | #8405 | 4 | arrays_reshape_25.f90 | inject | Handle using reshape with casting |
-| 10 | #8401 | 2 | arrays_constructor_01.f90 | inject | Fix verify condition for compile-time constant arrays |
+| 5 | #8490 | 3 | submodule_13.f90 | inject | Fix calling elemental function on array of derived types |
+| 6 | #8481 | 4 | complex_array_member_access.f90 | inject | Fix complex array member access (%re and %im) |
+| 7 | #8431 | 4 | arrays_reshape_29.f90 | inject | Handle some cases of array reshape |
+| 8 | #8405 | 4 | arrays_reshape_25.f90 | inject | Handle using reshape with casting |
+| 9 | #8401 | 2 | arrays_constructor_01.f90 | inject | Fix verify condition for compile-time constant arrays |
+| 10 | #6943 | 3 | intrinsics_374.f90 | inject | Fix findloc for 2-D arrays |
 
 ### String / I/O
 | # | PR | Files | Test file | Pattern | Title |
@@ -47,16 +47,11 @@ in C++ code with integration test cases.
 ### Struct / Derived Types
 | # | PR | Files | Test file | Pattern | Title |
 |---|---|---|---|---|---|
-<<<<<<< HEAD
-| 18 | #8150 | 3 | intrinsics_392.f90 | inject | Handle optional args in nested subroutines |
-| 19 | #8041 | 3 | intrinsics_391.f90 | inject | Fix compile-time eval of parameter expressions with intrinsics |
-| 20 | #5987 | 3 | do_loop_06.f90 | inject | Insert implicit_deallocate before exit only in block constructs |
-=======
 | 17 | #8150 | 3 | intrinsics_392.f90 | inject | Handle optional args in nested subroutines |
-| 18 | #8100 | 9 | allocate_24.f90 | inject | Fix printing for allocatable scalars |
+| 18 | #8041 | 3 | intrinsics_391.f90 | inject | Fix compile-time eval of parameter expressions with intrinsics |
 | 19 | #5987 | 3 | do_loop_06.f90 | inject | Insert implicit_deallocate before exit only in block constructs |
+
 | 20 | #7399 | 3 | intrinsics_378.f90 | inject | Fix deallocate variable in move_alloc after assignment |
->>>>>>> e506e86 (fix: repair 7 broken task validators, replace 4 base-passes tasks)
 
 ## Test patterns
 

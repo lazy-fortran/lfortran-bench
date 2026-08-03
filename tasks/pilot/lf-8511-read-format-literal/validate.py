@@ -25,15 +25,9 @@ def main() -> int:
         print(f"FAIL: lfortran binary not found at {lfortran}")
         return 1
 
-<<<<<<< HEAD:tasks/pilot/lf-8511-read-format-literal/validate.py
     test_path = materialize_fixed_test(
         workspace, TEST_FILE, Path(__file__).with_name("task.yaml")
     )
-=======
-    # Always inject: overwrite any stale or mismatched file from the workspace
-    test_path.parent.mkdir(parents=True, exist_ok=True)
-    test_path.write_text(INJECTED_TEST)
->>>>>>> e506e86 (fix: repair 7 broken task validators, replace 4 base-passes tasks):tasks/pilot/lf-8100-allocatable-print/validate.py
 
     result = subprocess.run(
         ["conda", "run", "-n", "lf-llvm11", str(lfortran), str(test_path)],
