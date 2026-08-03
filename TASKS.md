@@ -51,7 +51,7 @@ in C++ code with integration test cases.
 | 18 | #8041 | 3 | intrinsics_391.f90 | inject | Fix compile-time eval of parameter expressions with intrinsics |
 | 19 | #5987 | 3 | do_loop_06.f90 | inject | Insert implicit_deallocate before exit only in block constructs |
 
-| 20 | #7399 | 3 | intrinsics_378.f90 | inject | Fix deallocate variable in move_alloc after assignment |
+| 20 | #8312 | 4 | common_14.f90 | inject | Fix common block variable access from contained subroutine |
 
 ## Test patterns
 
