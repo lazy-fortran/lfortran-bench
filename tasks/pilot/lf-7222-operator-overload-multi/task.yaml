@@ -1,0 +1,20 @@
+id: lf-7222-operator-overload-multi
+title: "lfortran: fix operator overloading with multiple interfaces"
+repo_url: https://github.com/lfortran/lfortran.git
+issue_url: https://github.com/lfortran/lfortran/pull/7222
+base_commit: 87e8923ca28797341efdd70b2f2f3b51cc9ee715
+fixed_commit: 2443204f0394ed581ad54d99d4c5246a9f6e8c35
+setup_commands:
+  - "conda run -n lf-llvm11 bash -c 'cd {workspace} && bash build0.sh && cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DWITH_LLVM=yes -DCMAKE_BUILD_TYPE=Debug -DWITH_ZSTD=no -DWITH_ZLIB=no -DWITH_RUNTIME_STACKTRACE=yes && ninja -C build'"
+acceptance_commands:
+  - "python3 {task_dir}/validate.py {workspace}"
+issue_body: |
+  When multiple interface blocks define the same operator for different
+  types, the compiler fails to resolve the correct overloaded procedure.
+  Two separate `interface operator(/=)` blocks each binding a different
+  derived type produce a semantic error.  The fix is in the AST symbol
+  table visitor.
+acceptance_hint: |
+  The validator compiles and runs integration_tests/operator_overloading_10.f90
+  using the built lfortran binary. The test defines two types with separate
+  /= operator interfaces and invokes both.

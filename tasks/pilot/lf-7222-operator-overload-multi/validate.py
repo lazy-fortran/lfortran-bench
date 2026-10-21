@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validator for lf-8504: fix implicit casting for complex types.
+"""Validator for lf-7222: fix operator overloading with multiple interfaces.
 
 The test file is injected from the fixed commit since it was added by the PR.
 Acceptance: lfortran compiles and runs the test without errors.
@@ -13,7 +13,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from validator_support import materialize_fixed_test
 
-TEST_FILE = "integration_tests/complex_implicit_cast.f90"
+TEST_FILE = "integration_tests/operator_overloading_10.f90"
 
 
 def main() -> int:
@@ -42,7 +42,7 @@ def main() -> int:
             print(result.stderr[:500])
         return 1
 
-    print("PASS: complex_implicit_cast compiled and ran successfully")
+    print("PASS: operator_overloading_10 compiled and ran successfully")
     return 0
 
 
