@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validator for lf-8373: fix select type with pointer association.
+"""Validator for lf-6943: fix findloc for 2-D arrays.
 
 The test file is injected from the fixed commit since it was added by the PR.
 Acceptance: lfortran compiles and runs the test without errors.
@@ -13,7 +13,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from validator_support import materialize_fixed_test
 
-TEST_FILE = "integration_tests/select_type_11.f90"
+TEST_FILE = "integration_tests/intrinsics_374.f90"
 
 
 def main() -> int:
@@ -42,7 +42,7 @@ def main() -> int:
             print(result.stderr[:500])
         return 1
 
-    print("PASS: select_type_11 compiled and ran successfully")
+    print("PASS: intrinsics_374 compiled and ran successfully")
     return 0
 
 
