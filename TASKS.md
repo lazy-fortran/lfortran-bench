@@ -1,14 +1,12 @@
-# LFortran Bench Task Candidates
+# LFortran bench tasks
 
 20 tasks from merged PRs before September 2025. All fix compiler bugs
 in C++ code with integration test cases.
 
 ## Validation status
 
-- [x] All 20 PRs verified to have integration tests
-- [ ] Base commit build tested
-- [ ] Fixed commit build tested
-- [ ] Test fails at base, passes at fixed (oracle check)
+All 20 PRs have integration tests. Whether each test fails at the base commit and
+passes at the fixed commit is tracked in [ORACLE_STATUS.md](ORACLE_STATUS.md).
 
 ## Selected Tasks
 

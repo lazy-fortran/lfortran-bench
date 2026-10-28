@@ -1,9 +1,8 @@
 # Oracle Verification Status
 
-Candidate manifests prepared: 20/20
-
-End-to-end oracle verification (base fails, fixed passes) is complete for the
-five tasks changed by this change set and still pending for the other fifteen.
+All 20 task manifests exist. Five have been verified end to end (the acceptance
+test fails at the base commit and passes at the fixed commit); the other fifteen
+have not been verified yet.
 
 ## Verified (base fails, fixed passes)
 
@@ -19,7 +18,7 @@ commit, so the binary is tied to the pinned commit it was built from.
 | lf-8312-common-block-use | 3785cf907 (0.55.0-7) | 724e06adc (0.55.0-8) | `LCOMPILERS_ASSERT` `scope.find(name) == scope.end()`, `src/libasr/asr_scopes.h:85` |
 | lf-8421-string-bindc | 1900e28db (0.56.0-110) | d8d25738b (0.56.0-120) | `LCOMPILERS_ASSERT` "Unmatching String Physical Types", `src/libasr/codegen/asr_to_llvm.cpp:11031` |
 
-## Candidates (15 task manifests ready)
+## Not yet verified (15)
 
 - lf-5987-implicit-dealloc-exit
 - lf-7100-classtype-polymorphic
